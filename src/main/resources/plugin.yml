@@ -1,0 +1,6 @@
+name: NMLDamages
+version: '${version}'
+
+main: io.github.NoOne.nMLDamages.NMLDamages
+api-version: '26.3'
+load: POSTWORLD
