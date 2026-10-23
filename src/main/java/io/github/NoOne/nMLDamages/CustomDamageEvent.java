@@ -1,0 +1,84 @@
+package io.github.NoOne.nMLDamages;
+
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
+
+import java.util.HashMap;
+
+public class CustomDamageEvent extends Event implements Cancellable {
+    private static final HandlerList handlers = new HandlerList();
+    private final LivingEntity target;
+    private final LivingEntity damager;
+    private final HashMap<DamageType, Double> damageSplits;
+    private boolean cancelled;
+    private boolean mobDamager;
+    private int noDamageTicks;
+
+    public CustomDamageEvent(LivingEntity target, LivingEntity damager, HashMap<DamageType, Double> damageSplits) {
+        this.target = target;
+        this.damager = damager;
+        this.damageSplits = damageSplits;
+        this.cancelled = false;
+        mobDamager = false;
+        noDamageTicks = 0;
+    }
+
+    public CustomDamageEvent(LivingEntity target, LivingEntity damager, HashMap<DamageType, Double> damageSplits, int noDamageTicks) {
+        this.target = target;
+        this.damager = damager;
+        this.damageSplits = damageSplits;
+        this.cancelled = false;
+        this.noDamageTicks = noDamageTicks;
+        mobDamager = false;
+    }
+
+    public CustomDamageEvent(LivingEntity target, LivingEntity damager, HashMap<DamageType, Double> damageSplits, boolean mobDamager) {
+        this.target = target;
+        this.damager = damager;
+        this.damageSplits = damageSplits;
+        this.cancelled = false;
+        this.mobDamager = mobDamager;
+        noDamageTicks = 0;
+    }
+
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancel) {
+        this.cancelled = cancel;
+    }
+
+    public LivingEntity getTarget() {
+        return target;
+    }
+
+    public LivingEntity getDamager() {
+        return damager;
+    }
+
+    public HashMap<DamageType, Double> getDamageSplits() {
+        return damageSplits;
+    }
+
+    public boolean isMobDamager() {
+        return mobDamager;
+    }
+
+    public int getNoDamageTicks() {
+        return noDamageTicks;
+    }
+}
