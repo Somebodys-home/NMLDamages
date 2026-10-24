@@ -121,9 +121,9 @@ public class CustomDamager {
         if (critHit) {
             double critMultiplier = damagerStats.getCritDamage() / 100.0;
 
-            effectiveDamageSplits.replaceAll((k, v) -> v * critMultiplier);
-            attacker.getWorld().playSound(attacker, Sound.ENTITY_PLAYER_ATTACK_CRIT, 2f, 1f);
-            attacker.getWorld().playSound(attacker, Sound.ENTITY_PLAYER_ATTACK_CRIT, 2f, 1f);
+            effectiveDamageSplits.replaceAll((_, v) -> v * critMultiplier);
+            attacker.getWorld().playSound(target, Sound.ENTITY_PLAYER_ATTACK_CRIT, 2f, 1f);
+            attacker.getWorld().playSound(target, Sound.ENTITY_PLAYER_ATTACK_CRIT, 2f, 1f);
         }
 
         for (Map.Entry<DamageType, Double> entry : effectiveDamageSplits.entrySet()) {
