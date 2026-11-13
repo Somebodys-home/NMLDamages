@@ -1,0 +1,11 @@
+io\github\NoOne\nMLDamages\CustomDamager.class
+io\github\NoOne\nMLDamages\DamageHologramGenerator$1.class
+io\github\NoOne\nMLDamages\NMLDamages.class
+io\github\NoOne\nMLDamages\event\DamageListener.class
+io\github\NoOne\nMLDamages\enums\DamageType$1.class
+io\github\NoOne\nMLDamages\event\CustomDamageEvent.class
+io\github\NoOne\nMLDamages\enums\DamageSource.class
+io\github\NoOne\nMLDamages\enums\DamageType.class
+io\github\NoOne\nMLDamages\DamageHelper.class
+io\github\NoOne\nMLDamages\DamageHologramGenerator.class
+io\github\NoOne\nMLDamages\event\DamageListener$1.class

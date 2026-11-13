@@ -1,0 +1,10 @@
+name: NMLDamages
+version: '1.0'
+
+main: io.github.NoOne.nMLDamages.NMLDamages
+api-version: '26.3'
+load: POSTWORLD
+depend:
+  - NMLItems
+  - NMLPlayerStats
+  - NMLMobs

@@ -1,5 +1,6 @@
 package io.github.NoOne.nMLDamages;
 
+import io.github.NoOne.nMLDamages.event.DamageListener;
 import io.github.NoOne.nMLMobs.NMLMobs;
 import io.github.NoOne.nMLMobs.mobstats.MobStatsYMLManager;
 import io.github.NoOne.nMLPlayerStats.NMLPlayerStats;
@@ -10,8 +11,6 @@ public final class NMLDamages extends JavaPlugin {
     private static NMLDamages instance;
     private ProfileManager profileManager;
     private MobStatsYMLManager mobStatsYMLManager;
-    private CustomDamager customDamager;
-    private DamageHelper damageHelper;
 
     @Override
     public void onEnable() {
@@ -19,8 +18,6 @@ public final class NMLDamages extends JavaPlugin {
         profileManager = JavaPlugin.getPlugin(NMLPlayerStats.class).getProfileManager();
         mobStatsYMLManager = JavaPlugin.getPlugin(NMLMobs.class).getMobStatsYMLManager();
 
-        customDamager = new CustomDamager(this);
-        damageHelper = new DamageHelper();
         DamageHologramGenerator.startDamageDisplayTask();
 
         getServer().getPluginManager().registerEvents(new DamageListener(this), this);
@@ -30,16 +27,8 @@ public final class NMLDamages extends JavaPlugin {
         return instance;
     }
 
-    public CustomDamager getCustomDamager() {
-        return customDamager;
-    }
-
     public ProfileManager getProfileManager() {
         return profileManager;
-    }
-
-    public DamageHelper getDamageManager() {
-        return damageHelper;
     }
 
     public MobStatsYMLManager getMobStatsYMLManager() {

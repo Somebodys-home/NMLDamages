@@ -1,5 +1,6 @@
 package io.github.NoOne.nMLDamages;
 
+import io.github.NoOne.nMLDamages.enums.DamageType;
 import org.bukkit.Location;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.LivingEntity;
@@ -70,17 +71,17 @@ public class DamageHologramGenerator {
         // making name
         String name = "";
 
-        for (Map.Entry<DamageType, Double> damageEntry : sortedDamageSplits.entrySet()) {
-            double displayValue = Math.round(damageEntry.getValue() * 10.0) / 10.0;
-            String formatted = displayValue == (int) displayValue ? String.valueOf((int) displayValue) : String.valueOf(displayValue);
-
-            if (critHit) {
-                name += DamageType.toChatColor(damageEntry.getKey()) + "§l" + formatted + " " + DamageType.toEmoji(damageEntry.getKey()) + " ";
-            } else {
-                name += DamageType.toChatColor(damageEntry.getKey()) + formatted + " " + DamageType.toEmoji(damageEntry.getKey()) + " ";
-            }
-
-        }
+//        for (Map.Entry<DamageType, Double> damageEntry : sortedDamageSplits.entrySet()) {
+//            double displayValue = Math.round(damageEntry.getValue() * 10.0) / 10.0;
+//            String formatted = displayValue == (int) displayValue ? String.valueOf((int) displayValue) : String.valueOf(displayValue);
+//
+//            if (critHit) {
+//                name += DamageType.toChatColor(damageEntry.getKey()) + "§l" + formatted + " " + DamageType.toEmoji(damageEntry.getKey()) + " ";
+//            } else {
+//                name += DamageType.toChatColor(damageEntry.getKey()) + formatted + " " + DamageType.toEmoji(damageEntry.getKey()) + " ";
+//            }
+//
+//        }
 
         String finalName = name;
         TextDisplay display = location.getWorld().spawn(location, TextDisplay.class, entity -> {
