@@ -46,10 +46,10 @@ public class DamageHelper {
     }
 
     // returns a converted hashmap of player stats to damage types
-    public static HashMap<DamageType, ? extends Number> convertPlayerStatsToDamage(HashMap<PlayerStat, ? extends Number> statMap) {
+    public static HashMap<DamageType, Double> convertPlayerStatsToDamage(HashMap<PlayerStat, ? extends Number> statMap) {
         return new HashMap<>(){{
             for (Map.Entry<PlayerStat, ? extends Number> entry : statMap.entrySet()) {
-                put(entry.getKey().toItemStat().toDamageType(), entry.getValue());
+                put(entry.getKey().toItemStat().toDamageType(), entry.getValue().doubleValue());
             }
         }};
     }
