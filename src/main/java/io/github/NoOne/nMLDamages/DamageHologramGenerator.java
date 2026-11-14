@@ -71,17 +71,18 @@ public class DamageHologramGenerator {
         // making name
         String name = "";
 
-//        for (Map.Entry<DamageType, Double> damageEntry : sortedDamageSplits.entrySet()) {
-//            double displayValue = Math.round(damageEntry.getValue() * 10.0) / 10.0;
-//            String formatted = displayValue == (int) displayValue ? String.valueOf((int) displayValue) : String.valueOf(displayValue);
-//
-//            if (critHit) {
-//                name += DamageType.toChatColor(damageEntry.getKey()) + "§l" + formatted + " " + DamageType.toEmoji(damageEntry.getKey()) + " ";
-//            } else {
-//                name += DamageType.toChatColor(damageEntry.getKey()) + formatted + " " + DamageType.toEmoji(damageEntry.getKey()) + " ";
-//            }
-//
-//        }
+        for (Map.Entry<DamageType, Double> damageEntry : sortedDamageSplits.entrySet()) {
+            double displayValue = Math.round(damageEntry.getValue() * 10.0) / 10.0;
+            String formatted = displayValue == (int) displayValue ? String.valueOf((int) displayValue) : String.valueOf(displayValue);
+            DamageType damageType = damageEntry.getKey();
+
+            if (critHit) {
+                name += damageType.toChatColor() + "§l" + formatted + " " + damageType.toEmoji() + " ";
+            } else {
+                name += damageType.toChatColor() + formatted + " " + damageType.toEmoji() + " ";
+            }
+
+        }
 
         String finalName = name;
         TextDisplay display = location.getWorld().spawn(location, TextDisplay.class, entity -> {

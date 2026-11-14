@@ -20,7 +20,7 @@ public final class NMLDamages extends JavaPlugin {
 
         DamageHologramGenerator.startDamageDisplayTask();
 
-        getServer().getPluginManager().registerEvents(new DamageListener(this), this);
+        getServer().getPluginManager().registerEvents(new DamageListener(), this);
     }
 
     public static NMLDamages getInstance() {

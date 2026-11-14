@@ -7,50 +7,85 @@ import io.github.NoOne.nMLPlayerStats.statSystem.PlayerStat;
 import io.github.NoOne.nMLPlayerStats.statSystem.Stats;
 import org.bukkit.entity.Player;
 
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 
 
 public class CustomDamager {
     private static ProfileManager profileManager = NMLDamages.getInstance().getProfileManager();
     private static MobStatsYMLManager mobStatsYMLManager = NMLDamages.getInstance().getMobStatsYMLManager();
 
-    public static void playerDamagePlayer(Player damager, Player damaged, HashMap<DamageType, Double> damage) {
+    public static void playerDamagePlayer(Player damager, Player damaged, HashMap<DamageType, Double> damage, int noDamageTicks) {
         Stats damagerStats = profileManager.getStats(damager.getUniqueId());
-        Stats damagedStats = profileManager.getStats(damager.getUniqueId());
+        Stats damagedStats = profileManager.getStats(damaged.getUniqueId());
 
         if (!passesEvasionCheck(damagedStats.getIntStatValue(PlayerStat.EVASION))) {
             return;
         }
+
+        applyElementalDamage(damage, damagerStats);
+        applyElementalResistances(damage, damagedStats);
+        criticalHitCheck(damage, damagerStats);
+
+        damaged.damage(DamageHelper.getTotalDamage(damage));
+        damaged.setNoDamageTicks(noDamageTicks);
     }
 
-    // applies the stats' elemental damage to the highest damage to the damage map
+    // applies the stats' elemental damage to the highest damage on the damage map
     private static void applyElementalDamage(HashMap<DamageType, Double> damage, Stats stats) {
+        DamageType highestDamage = DamageHelper.sortDamagesByHighest(damage).keySet().stream().toList().getFirst();
 
+        if (highestDamage != DamageType.PHYSICAL) {
+            damage.replace(highestDamage, damage.get(highestDamage) + stats.getStatValue(PlayerStat.ELEMENTAL_DAMAGE));
+        }
     }
 
-    // returns true/false if a random int between 1 - 100 is less than the given evasion stat
+    // applies the stats' elemental resistances to the given damage map
+    private static void applyElementalResistances(HashMap<DamageType, Double> damage, Stats stats) {
+        double defense = stats.getStatValue(PlayerStat.DEFENSE);
+        
+        for (Map.Entry<DamageType, Double> entry : damage.entrySet()) {
+            double resistanceMultiplier = 100.0;
+            double elementalResist = switch (entry.getKey()) {
+                case PHYSICAL -> stats.getStatValue(PlayerStat.PHYSICAL_RESIST);
+                case FIRE -> stats.getStatValue(PlayerStat.FIRE_RESIST);
+                case COLD -> stats.getStatValue(PlayerStat.COLD_RESIST);
+                case EARTH -> stats.getStatValue(PlayerStat.EARTH_RESIST);
+                case LIGHTNING -> stats.getStatValue(PlayerStat.LIGHTNING_RESIST);
+                case AIR -> stats.getStatValue(PlayerStat.AIR_RESIST);
+                case RADIANT -> stats.getStatValue(PlayerStat.RADIANT_RESIST);
+                case NECROTIC -> stats.getStatValue(PlayerStat.NECROTIC_RESIST);
+                case PURE -> 0;
+            };
+
+            resistanceMultiplier -= (defense / 2) + elementalResist;
+            damage.replace(entry.getKey(), entry.getValue() * resistanceMultiplier / 100);
+        }
+    }
+
+    // runs a check on if the attack critically hit, and applies the multiplied damage to the map if it did
+    private static void criticalHitCheck(HashMap<DamageType, Double> damage, Stats stats) {
+        int critChance = stats.getIntStatValue(PlayerStat.CRIT_CHANCE);
+
+        if (passesCritCheck(critChance)) {
+            double critMultiplier = 1 + (stats.getStatValue(PlayerStat.CRIT_DAMAGE) / 100);
+
+            for (Map.Entry<DamageType, Double> damageEntry : damage.entrySet()) {
+                damageEntry.setValue(damageEntry.getValue() * critMultiplier);
+            }
+        }
+    }
+
+    // returns true/false if a random int between 1 - 100 is less than or equal to the given evasion stat
     private static boolean passesEvasionCheck(int evasionStat) {
-        return ThreadLocalRandom.current().nextInt(1, 100) < evasionStat;
+        return ThreadLocalRandom.current().nextInt(1, 100) <= evasionStat;
     }
 
-    // returns a linked hashmap of the given hashmap, but with its damages sorted by highest to lowest
-    private LinkedHashMap<DamageType, Double> sortDamageByHighest(HashMap<DamageType, Double> damage) {
-        return damage.entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (oldValue, newValue) -> oldValue,
-                        LinkedHashMap::new
-                ));
+    // returns true/false if a random int between 1 - 100 is less than or equal to the given crit chance stat
+    private static boolean passesCritCheck(int critChanceStat) {
+        return ThreadLocalRandom.current().nextInt(1, 100) <= critChanceStat;
     }
-
 
 //    public static void doDamage(LivingEntity target, LivingEntity attacker, Map<DamageType, Double> damageSplits, boolean isMobDamager, int noDamageTicks) {
 //        Stats targetStats = profileManager.getStats(target.getUniqueId());
@@ -140,7 +175,7 @@ public class CustomDamager {
 //        // crit chance
 //        if (damagerStats != null) critHit = ThreadLocalRandom.current().nextDouble(1, 100) <= damagerStats.getCritChance();
 //        if (critHit) {
-//            double critMultiplier = damagerStats.getCritDamage() / 100.0;
+//            double critMultiplier = damagerStats.getCritDamage() / 10stats.getStatValue(PlayerStat.COLD_RESIST);
 //
 //            effectiveDamageSplits.replaceAll((_, v) -> v * critMultiplier);
 //            attacker.getWorld().playSound(target, Sound.ENTITY_PLAYER_ATTACK_CRIT, 2f, 1f);
@@ -164,7 +199,7 @@ public class CustomDamager {
 //        // critical hit case
 //        if (mobStats != null) critHit = ThreadLocalRandom.current().nextDouble(1, 100) <= mobStats.getCritChance();
 //        if (critHit) {
-//            double critMultiplier = mobStats.getCritDamage() / 100.0;
+//            double critMultiplier = mobStats.getCritDamage() / 10stats.getStatValue(PlayerStat.COLD_RESIST);
 //
 //            effectiveDamageSplits.replaceAll((k, v) -> v * critMultiplier);
 //        }

@@ -2,10 +2,8 @@ package io.github.NoOne.nMLDamages.event;
 
 import io.github.NoOne.nMLDamages.CustomDamager;
 import io.github.NoOne.nMLDamages.DamageHelper;
-import io.github.NoOne.nMLDamages.NMLDamages;
 import io.github.NoOne.nMLDamages.enums.DamageSource;
 import io.github.NoOne.nMLDamages.enums.DamageType;
-import io.github.NoOne.nMLPlayerStats.profileSystem.ProfileManager;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -18,11 +16,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import java.util.HashMap;
 
 public class DamageListener implements Listener {
-    private ProfileManager profileManager;
-
-    public DamageListener(NMLDamages nmlDamages) {
-        profileManager = nmlDamages.getProfileManager();
-    }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void doCustomDamage(CustomDamageEvent event) {
@@ -31,14 +24,16 @@ public class DamageListener implements Listener {
         DamageSource damagerSource = event.getDamagerSource();
         DamageSource damagedSource = event.getDamagedSource();
         HashMap<DamageType, Double> damage = event.getDamage();
+        int noDamageTicks = event.getNoDamageTicks();
 
         if (!DamageHelper.isMobDamageable(damaged) || event.getDamage().isEmpty() || damaged.isDead() || damager.isDead()) return;
 
         switch (damagerSource) {
             case PLAYER -> {
                 switch (damagedSource) {
-                    case PLAYER -> {
-                        CustomDamager.playerDamagePlayer((Player) damager, (Player) damaged, damage);
+                    case PLAYER -> CustomDamager.playerDamagePlayer((Player) damager, (Player) damaged, damage, noDamageTicks);
+                    case ENVIRONMENT -> {
+                        return;
                     }
                 }
             }

@@ -29,30 +29,11 @@ public enum DamageType {
     }
 
     public String toChatColor() {
-        return switch (this) {
-            case PHYSICAL -> "§4";
-            case FIRE -> "§c";
-            case COLD -> "§b";
-            case EARTH -> "§2";
-            case LIGHTNING -> "§e";
-            case AIR -> "§7";
-            case RADIANT, PURE -> "§f";
-            case NECROTIC -> "§5";
-        };
+        return this.toItemStat().toChatColor();
     }
 
     public String toEmoji() {
-        return switch (this) {
-            case PHYSICAL -> "⚔";
-            case FIRE -> "\uD83D\uDD25";
-            case COLD -> "❄";
-            case EARTH -> "\uD83E\uDEA8";
-            case LIGHTNING -> "\uD83D\uDDF2";
-            case AIR -> "☁";
-            case RADIANT -> "✦";
-            case NECROTIC -> "\uD83C\uDF00";
-            case PURE -> "\uD83D\uDCA2";
-        };
+        return this.toItemStat().toEmoji();
     }
 
     public ItemStat toItemStat() {
@@ -69,17 +50,17 @@ public enum DamageType {
         };
     }
 
-    public static DamageType fromItemStat(ItemStat stat) {
-        return switch (stat) {
-            case PHYSICAL_DAMAGE -> PHYSICAL;
-            case FIRE_DAMAGE -> FIRE;
-            case COLD_DAMAGE -> COLD;
-            case EARTH_DAMAGE -> EARTH;
-            case LIGHTNING_DAMAGE -> LIGHTNING;
-            case AIR_DAMAGE -> AIR;
-            case RADIANT_DAMAGE -> RADIANT;
-            case NECROTIC_DAMAGE -> NECROTIC;
-            case PURE_DAMAGE -> PURE;
+    public static DamageType fromString(String string) {
+        return switch (string) {
+            case "Physical" -> PHYSICAL;
+            case "Fire" -> FIRE;
+            case "Cold" -> COLD;
+            case "Earth" -> EARTH;
+            case "Lightning" -> LIGHTNING;
+            case "Air" -> AIR;
+            case "Radiant" -> RADIANT;
+            case "Necrotic" -> NECROTIC;
+            case "Pure" -> PURE;
             default -> null;
         };
     }
