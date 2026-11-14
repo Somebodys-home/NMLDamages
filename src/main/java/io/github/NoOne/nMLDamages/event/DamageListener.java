@@ -4,6 +4,8 @@ import io.github.NoOne.nMLDamages.CustomDamager;
 import io.github.NoOne.nMLDamages.DamageHelper;
 import io.github.NoOne.nMLDamages.enums.DamageSource;
 import io.github.NoOne.nMLDamages.enums.DamageType;
+import io.github.NoOne.nMLMobs.NMLMobSystem;
+import io.github.NoOne.nMLMobs.mobs.NMLMob;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -27,6 +29,11 @@ public class DamageListener implements Listener {
         int noDamageTicks = event.getNoDamageTicks();
 
         if (!DamageHelper.isMobDamageable(damaged) || event.getDamage().isEmpty() || damaged.isDead() || damager.isDead()) return;
+        if (NMLMobSystem.isNMLMob(damaged)) {
+            NMLMob nmlMob = NMLMobSystem.getNmlMob(damaged);
+
+            if (!nmlMob.canBeDamaged(damaged)) return;
+        }
 
         switch (damagerSource) {
             case PLAYER -> {
@@ -39,25 +46,6 @@ public class DamageListener implements Listener {
                 }
             }
         }
-//        if (event.isMobDamager()) {
-//            if (target instanceof Player player) {
-//                Stats targetStats = profileManager.getPlayerProfile(player.getUniqueId()).getStats();
-//                int evasion = targetStats.getEvasion();
-//                int random = (int) (Math.random() * 100) + 1;
-//
-//                if (random <= evasion || evasion >= 100) { // evasion
-//                    player.sendMessage("your evasion triggered! (" + evasion + "%)");
-//                    event.setCancelled(true);
-//                    return;
-//                }
-//
-//                customDamager.doDamage(player, event.getDamager(), event.getDamage(), true, event.getNoDamageTicks());
-//            }
-//        } else { // player is damager
-//            if (!target.equals(event.getDamager())) {
-//                customDamager.doDamage(target, event.getDamager(), event.getDamage(), false, event.getNoDamageTicks());
-//            }
-//        }
     }
 
     @EventHandler
