@@ -1,7 +1,9 @@
 package io.github.NoOne.nMLDamages.event;
 
+import io.github.NoOne.nMLDamages.DamageHelper;
 import io.github.NoOne.nMLDamages.enums.DamageSource;
 import io.github.NoOne.nMLDamages.enums.DamageType;
+import io.github.NoOne.nMLPlayerStats.statSystem.Stats;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -34,6 +36,16 @@ public class CustomDamageEvent extends Event implements Cancellable {
         this.damager = damager;
         this.damage = damage;
         this.noDamageTicks = noDamageTicks;
+        cancelled = false;
+        damagedSource = DamageSource.toDamageSource(damaged);
+        damagerSource = DamageSource.toDamageSource(damager);
+    }
+
+    public CustomDamageEvent(LivingEntity damaged, LivingEntity damager, Stats damagerStats) {
+        this.damaged = damaged;
+        this.damager = damager;
+        this.damage = (HashMap<DamageType, Double>) DamageHelper.convertPlayerStatsToDamage(damagerStats.getAllDamages());
+        noDamageTicks = 0;
         cancelled = false;
         damagedSource = DamageSource.toDamageSource(damaged);
         damagerSource = DamageSource.toDamageSource(damager);
