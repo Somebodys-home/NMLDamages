@@ -13,11 +13,11 @@ import java.util.stream.Collectors;
 
 public class DamageHelper {
     // returns the sum of all the damages on a map
-    public static double getTotalDamage(HashMap<DamageType, Double> damage) {
+    public static double getTotalDamage(HashMap<DamageType, ? extends Number> damage) {
         double totalDamage = 0;
 
-        for (Map.Entry<DamageType, Double> entry : damage.entrySet()) {
-            totalDamage += entry.getValue();
+        for (Map.Entry<DamageType, ? extends Number> entry : damage.entrySet()) {
+            totalDamage += entry.getValue().doubleValue();
         }
 
         return totalDamage;
@@ -37,39 +37,38 @@ public class DamageHelper {
     }
 
     // returns a converted hashmap of damage types to a map of item stats
-    public static HashMap<ItemStat, Double> convertDamagesToItemStats(HashMap<DamageType, Double> statMap) {
+    public static HashMap<ItemStat, ? extends Number> convertDamagesToItemStats(HashMap<DamageType, ? extends Number> statMap) {
         return new HashMap<>(){{
-            for (Map.Entry<DamageType, Double> entry : statMap.entrySet()) {
+            for (Map.Entry<DamageType, ? extends Number> entry : statMap.entrySet()) {
                 put(entry.getKey().toItemStat(), entry.getValue());
             }
         }};
     }
 
     // returns a converted hashmap of player stats to damage types
-    public static HashMap<DamageType, Double> convertPlayerStatsToDamage(HashMap<PlayerStat, Integer> statMap) {
+    public static HashMap<DamageType, ? extends Number> convertPlayerStatsToDamage(HashMap<PlayerStat, ? extends Number> statMap) {
         return new HashMap<>(){{
-            for (Map.Entry<PlayerStat, Integer> entry : statMap.entrySet()) {
-                put(entry.getKey().toItemStat().toDamageType(), Double.valueOf(entry.getValue()));
+            for (Map.Entry<PlayerStat, ? extends Number> entry : statMap.entrySet()) {
+                put(entry.getKey().toItemStat().toDamageType(), entry.getValue());
             }
         }};
     }
 
     // returns a converted hashmap of strings to damage types
-    public static HashMap<DamageType, Double> convertStringsToDamageTypes(HashMap<String, Double> statMap) {
+    public static HashMap<DamageType, ? extends Number> convertStringsToDamageTypes(HashMap<String, ? extends Number> statMap) {
         return new HashMap<>(){{
-            for (Map.Entry<String, Double> entry : statMap.entrySet()) {
+            for (Map.Entry<String, ? extends Number> entry : statMap.entrySet()) {
                 put(DamageType.fromString(entry.getKey()), entry.getValue());
             }
         }};
     }
 
     // returns a map of all the values, multiplied by a given multiplier
-    public static HashMap<DamageType, Double> multiplyDamageMap(HashMap<DamageType, Double> damageMap, double multiplier) {
-        return new HashMap<>(damageMap){{
-            for (Map.Entry<DamageType, Double> damageEntry : this.entrySet()) {
-                damageEntry.setValue(damageEntry.getValue() * multiplier);
-            }
-        }};
+    public static HashMap<DamageType, Double> multiplyDamageMap(HashMap<DamageType, ? extends Number> damageMap, double multiplier) {
+        HashMap<DamageType, Double> result = new HashMap<>();
+
+        damageMap.forEach((type, value) -> result.put(type, value.doubleValue() * multiplier));
+        return result;
     }
 
     // returns a linked hashmap of the given hashmap, but with its damages sorted by highest to lowest
