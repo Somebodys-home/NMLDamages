@@ -1,10 +1,12 @@
 package io.github.NoOne.nMLDamages;
 
 import io.github.NoOne.nMLDamages.enums.DamageType;
+import io.github.NoOne.nMLMobs.mobstats.MobStats;
 import io.github.NoOne.nMLMobs.mobstats.MobStatsYMLManager;
 import io.github.NoOne.nMLPlayerStats.profileSystem.ProfileManager;
 import io.github.NoOne.nMLPlayerStats.statSystem.PlayerStat;
 import io.github.NoOne.nMLPlayerStats.statSystem.Stats;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -30,6 +32,22 @@ public class CustomDamager {
 
         damaged.damage(DamageHelper.getTotalDamage(damage));
         damaged.setNoDamageTicks(noDamageTicks);
+    }
+
+    public static void playerDamageMob(Player damager, LivingEntity mob, HashMap<DamageType, Double> damage, int noDamageTicks) {
+        Stats damagerStats = profileManager.getStats(damager.getUniqueId());
+        MobStats mobStats = mobStatsYMLManager.getMobStatsFromYml(mob.getName());
+
+        if (!passesEvasionCheck(mobStats.getIntStatValue(PlayerStat.EVASION))) {
+            return;
+        }
+
+        applyElementalDamage(damage, damagerStats);
+        applyElementalResistances(damage, mobStats);
+        criticalHitCheck(damage, damagerStats);
+
+        mob.damage(DamageHelper.getTotalDamage(damage));
+        mob.setNoDamageTicks(noDamageTicks);
     }
 
     // applies the stats' elemental damage to the highest damage on the damage map

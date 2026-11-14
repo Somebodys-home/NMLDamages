@@ -32,8 +32,9 @@ public class DamageListener implements Listener {
             case PLAYER -> {
                 switch (damagedSource) {
                     case PLAYER -> CustomDamager.playerDamagePlayer((Player) damager, (Player) damaged, damage, noDamageTicks);
+                    case MOB -> CustomDamager.playerDamageMob((Player) damager, damaged, damage, noDamageTicks);
                     case ENVIRONMENT -> {
-                        return;
+                        // pluh
                     }
                 }
             }
