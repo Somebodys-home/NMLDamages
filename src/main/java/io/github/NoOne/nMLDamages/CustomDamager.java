@@ -2,7 +2,6 @@ package io.github.NoOne.nMLDamages;
 
 import io.github.NoOne.nMLDamages.enums.DamageType;
 import io.github.NoOne.nMLMobs.NMLMobSystem;
-import io.github.NoOne.nMLMobs.mobs.NMLMob;
 import io.github.NoOne.nMLMobs.mobstats.MobStats;
 import io.github.NoOne.nMLMobs.mobstats.MobStatsYMLManager;
 import io.github.NoOne.nMLPlayerStats.profileSystem.ProfileManager;
@@ -26,7 +25,7 @@ public class CustomDamager {
         Stats damagedStats = profileManager.getStats(damaged.getUniqueId());
         boolean critHit = passesCritCheck(damagerStats.getIntStatValue(PlayerStat.CRIT_CHANCE));
 
-        if (!passesEvasionCheck(damagedStats.getIntStatValue(PlayerStat.EVASION))) {
+        if (!failsEvasionCheck(damagedStats.getIntStatValue(PlayerStat.EVASION))) {
             return;
         }
 
@@ -47,10 +46,9 @@ public class CustomDamager {
         applyElementalDamage(damage, damagerStats);
 
         if (NMLMobSystem.isNMLMob(mob)) {
-            NMLMob nmlMob = NMLMobSystem.getNmlMob(mob);
             MobStats mobStats = mobStatsYMLManager.getMobStatsFromYml(mob.getName());
 
-            if (!passesEvasionCheck(mobStats.getIntStatValue(PlayerStat.EVASION))) {
+            if (failsEvasionCheck(mobStats.getIntStatValue(PlayerStat.EVASION))) {
                 return;
             }
 
@@ -60,7 +58,6 @@ public class CustomDamager {
             mob.damage(DamageHelper.getTotalDamage(damage));
             mob.setNoDamageTicks(0);
             mob.setVelocity(calculateKnockbackVector(damager, mob));
-            nmlMob.addAttacker(damager, noDamageTicks);
         } else {
             applyCriticalDamage(mob, damage, damagerStats, critHit);
 
@@ -118,14 +115,14 @@ public class CustomDamager {
         }
     }
 
-    // returns true/false if a random int between 1 - 100 is less than or equal to the given evasion stat
-    private static boolean passesEvasionCheck(int evasionStat) {
-        return ThreadLocalRandom.current().nextInt(1, 100) <= evasionStat;
+    // returns true/false if a random roll is less than or equal to the given evasion stat
+    private static boolean failsEvasionCheck(int evasionStat) {
+        return ThreadLocalRandom.current().nextInt(100) < evasionStat;
     }
 
-    // returns true/false if a random int between 1 - 100 is less than or equal to the given crit chance stat
+    // returns true/false if a random int between 1 - 100 is greater than or equal to the given crit chance stat
     private static boolean passesCritCheck(int critChanceStat) {
-        return ThreadLocalRandom.current().nextInt(1, 100) <= critChanceStat;
+        return ThreadLocalRandom.current().nextInt(100) < critChanceStat;
     }
 
     private static Vector calculateKnockbackVector(LivingEntity damager, LivingEntity damaged) {

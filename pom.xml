@@ -95,7 +95,7 @@
         <dependency>
             <groupId>com.github.Somebodys-home</groupId>
             <artifactId>NMLMobs</artifactId>
-            <version>d70645bb4d</version>
+            <version>4bba846db7</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
