@@ -12,6 +12,8 @@ public enum DamageSource {
     public static DamageSource toDamageSource(LivingEntity livingEntity) {
         if (livingEntity instanceof Player) {
             return PLAYER;
+        } else if (livingEntity == null) {
+           return ENVIRONMENT;
         } else {
             return MOB;
         }
