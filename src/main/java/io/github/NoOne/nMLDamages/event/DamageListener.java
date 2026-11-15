@@ -4,8 +4,6 @@ import io.github.NoOne.nMLDamages.CustomDamager;
 import io.github.NoOne.nMLDamages.DamageHelper;
 import io.github.NoOne.nMLDamages.enums.DamageSource;
 import io.github.NoOne.nMLDamages.enums.DamageType;
-import io.github.NoOne.nMLMobs.NMLMobSystem;
-import io.github.NoOne.nMLMobs.mobs.NMLMob;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -29,11 +27,6 @@ public class DamageListener implements Listener {
         int noDamageTicks = event.getNoDamageTicks();
 
         if (!DamageHelper.isMobDamageable(damaged) || event.getDamage().isEmpty() || damaged.isDead() || damager.isDead()) return;
-        if (NMLMobSystem.isNMLMob(damaged)) {
-            NMLMob nmlMob = NMLMobSystem.getNmlMob(damaged);
-
-            if (!nmlMob.canBeDamaged(damaged)) return;
-        }
 
         switch (damagerSource) {
             case PLAYER -> {
