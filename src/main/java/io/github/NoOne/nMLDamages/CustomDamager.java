@@ -87,6 +87,38 @@ public class CustomDamager {
         damaged.setVelocity(calculateKnockbackVector(mob, damaged));
     }
 
+    public static void mobDamageMob(LivingEntity damager, LivingEntity damaged, HashMap<DamageType, Double> damage, int noDamageTicks) {
+        MobStats damagerStats = mobStatsYMLManager.getMobStatsFromYml(damager.getName());
+        MobStats damagedStats = mobStatsYMLManager.getMobStatsFromYml(damaged.getName());
+        boolean critHit = passesCritCheck(damagerStats.getIntStatValue(PlayerStat.CRIT_CHANCE));
+
+        if (!failsEvasionCheck(damagedStats.getIntStatValue(PlayerStat.EVASION))) {
+            return;
+        }
+
+        applyElementalDamage(damage, damagerStats);
+        applyElementalResistances(damage, damagedStats);
+        applyCriticalDamage(damaged, damage, damagerStats, critHit);
+
+        damaged.damage(DamageHelper.getTotalDamage(damage));
+        damaged.setNoDamageTicks(noDamageTicks);
+        damaged.setVelocity(calculateKnockbackVector(damager, damaged));
+    }
+
+    public static void damageLivingEntity(LivingEntity damaged, HashMap<DamageType, Double> damage, int noDamageTicks) {
+        Stats damagedStats;
+
+        if (damaged instanceof Player player) {
+            damagedStats = profileManager.getStats(player.getUniqueId());
+        } else {
+            damagedStats = mobStatsYMLManager.getMobStatsFromYml(damaged.getName());
+        }
+
+        applyElementalResistances(damage, damagedStats);
+        damaged.damage(DamageHelper.getTotalDamage(damage));
+        damaged.setNoDamageTicks(noDamageTicks);
+    }
+
     // applies the stats' elemental damage to the highest damage on the damage map
     private static void applyElementalDamage(HashMap<DamageType, Double> damage, Stats stats) {
         DamageType highestDamage = DamageHelper.sortDamagesByHighest(damage).keySet().stream().toList().getFirst();
