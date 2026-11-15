@@ -84,7 +84,7 @@ public class CustomDamager {
 
         damaged.damage(DamageHelper.getTotalDamage(damage));
         damaged.setNoDamageTicks(noDamageTicks);
-        damaged.setVelocity(calculateKnockbackVector(damaged, mob));
+        damaged.setVelocity(calculateKnockbackVector(mob, damaged));
     }
 
     // applies the stats' elemental damage to the highest damage on the damage map
