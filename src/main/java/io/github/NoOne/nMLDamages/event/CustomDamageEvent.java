@@ -44,8 +44,18 @@ public class CustomDamageEvent extends Event implements Cancellable {
     public CustomDamageEvent(LivingEntity damaged, LivingEntity damager, Stats damagerStats) {
         this.damaged = damaged;
         this.damager = damager;
-        this.damage = (HashMap<DamageType, Double>) DamageHelper.convertPlayerStatsToDamage(damagerStats.getAllDamages());
+        this.damage = DamageHelper.convertPlayerStatsToDamage(damagerStats.getAllDamages());
         noDamageTicks = 0;
+        cancelled = false;
+        damagedSource = DamageSource.toDamageSource(damaged);
+        damagerSource = DamageSource.toDamageSource(damager);
+    }
+
+    public CustomDamageEvent(LivingEntity damaged, LivingEntity damager, Stats damagerStats, int noDamageTicks) {
+        this.damaged = damaged;
+        this.damager = damager;
+        this.damage = DamageHelper.convertPlayerStatsToDamage(damagerStats.getAllDamages());
+        this.noDamageTicks = noDamageTicks;
         cancelled = false;
         damagedSource = DamageSource.toDamageSource(damaged);
         damagerSource = DamageSource.toDamageSource(damager);

@@ -26,7 +26,7 @@ public class DamageListener implements Listener {
         HashMap<DamageType, Double> damage = event.getDamage();
         int noDamageTicks = event.getNoDamageTicks();
 
-        if (!DamageHelper.isMobDamageable(damaged) || event.getDamage().isEmpty() || damaged.isDead() || damager.isDead()) return;
+        if (!DamageHelper.isMobDamageable(damaged) || event.getDamage().isEmpty() || damaged.isDead()) return;
 
         switch (damagerSource) {
             case PLAYER -> {
@@ -36,6 +36,11 @@ public class DamageListener implements Listener {
                     case ENVIRONMENT -> {
                         // pluh
                     }
+                }
+            }
+            case MOB ->  {
+                switch (damagedSource) {
+                    case PLAYER -> CustomDamager.mobDamagePlayer(damager, (Player) damaged, damage, noDamageTicks);
                 }
             }
         }

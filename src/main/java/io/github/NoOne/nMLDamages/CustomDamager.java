@@ -69,6 +69,24 @@ public class CustomDamager {
         DamageHologramGenerator.createDamageHologram(damager, mob, damage, critHit);
     }
 
+    public static void mobDamagePlayer(LivingEntity mob, Player damaged, HashMap<DamageType, Double> damage, int noDamageTicks) {
+        MobStats mobStats = mobStatsYMLManager.getMobStatsFromYml(mob.getName());
+        Stats damagedStats = profileManager.getStats(damaged.getUniqueId());
+        boolean critHit = passesCritCheck(damagedStats.getIntStatValue(PlayerStat.CRIT_CHANCE));
+
+        if (failsEvasionCheck(damagedStats.getIntStatValue(PlayerStat.EVASION))) {
+            return;
+        }
+
+        applyElementalDamage(damage, mobStats);
+        applyElementalResistances(damage, damagedStats);
+        applyCriticalDamage(damaged, damage, mobStats, critHit);
+
+        damaged.damage(DamageHelper.getTotalDamage(damage));
+        damaged.setNoDamageTicks(noDamageTicks);
+        damaged.setVelocity(calculateKnockbackVector(damaged, mob));
+    }
+
     // applies the stats' elemental damage to the highest damage on the damage map
     private static void applyElementalDamage(HashMap<DamageType, Double> damage, Stats stats) {
         DamageType highestDamage = DamageHelper.sortDamagesByHighest(damage).keySet().stream().toList().getFirst();
