@@ -4,7 +4,7 @@ import io.github.NoOne.nMLDamages.enums.DamageType;
 import io.github.NoOne.nMLMobs.NMLMobSystem;
 import io.github.NoOne.nMLMobs.mobstats.MobStats;
 import io.github.NoOne.nMLMobs.mobstats.MobStatsYMLManager;
-import io.github.NoOne.nMLPlayerStats.profileSystem.ProfileManager;
+import io.github.NoOne.nMLPlayerStats.StatConfigManager;
 import io.github.NoOne.nMLPlayerStats.statSystem.PlayerStat;
 import io.github.NoOne.nMLPlayerStats.statSystem.Stats;
 import org.bukkit.Sound;
@@ -17,12 +17,12 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class CustomDamager {
-    private static ProfileManager profileManager = NMLDamages.getInstance().getProfileManager();
+    private static StatConfigManager statConfigManager = NMLDamages.getInstance().getStatConfigManager();
     private static MobStatsYMLManager mobStatsYMLManager = NMLDamages.getInstance().getMobStatsYMLManager();
 
     public static void playerDamagePlayer(Player damager, Player damaged, HashMap<DamageType, Double> damage, int noDamageTicks) {
-        Stats damagerStats = profileManager.getStats(damager.getUniqueId());
-        Stats damagedStats = profileManager.getStats(damaged.getUniqueId());
+        Stats damagerStats = statConfigManager.getStats(damager.getUniqueId());
+        Stats damagedStats = statConfigManager.getStats(damaged.getUniqueId());
         boolean critHit = passesCritCheck(damagerStats.getIntStatValue(PlayerStat.CRIT_CHANCE));
 
         if (!failsEvasionCheck(damagedStats.getIntStatValue(PlayerStat.EVASION))) {
@@ -40,7 +40,7 @@ public class CustomDamager {
     }
 
     public static void playerDamageMob(Player damager, LivingEntity mob, HashMap<DamageType, Double> damage, int noDamageTicks) {
-        Stats damagerStats = profileManager.getStats(damager.getUniqueId());
+        Stats damagerStats = statConfigManager.getStats(damager.getUniqueId());
         boolean critHit = passesCritCheck(damagerStats.getIntStatValue(PlayerStat.CRIT_CHANCE));
 
         applyElementalDamage(damage, damagerStats);
@@ -71,7 +71,7 @@ public class CustomDamager {
 
     public static void mobDamagePlayer(LivingEntity mob, Player damaged, HashMap<DamageType, Double> damage, int noDamageTicks) {
         MobStats mobStats = mobStatsYMLManager.getMobStatsFromYml(mob.getName());
-        Stats damagedStats = profileManager.getStats(damaged.getUniqueId());
+        Stats damagedStats = statConfigManager.getStats(damaged.getUniqueId());
         boolean critHit = passesCritCheck(damagedStats.getIntStatValue(PlayerStat.CRIT_CHANCE));
 
         if (failsEvasionCheck(damagedStats.getIntStatValue(PlayerStat.EVASION))) {
@@ -109,7 +109,7 @@ public class CustomDamager {
         Stats damagedStats;
 
         if (damaged instanceof Player player) {
-            damagedStats = profileManager.getStats(player.getUniqueId());
+            damagedStats = statConfigManager.getStats(player.getUniqueId());
         } else {
             damagedStats = mobStatsYMLManager.getMobStatsFromYml(damaged.getName());
         }
